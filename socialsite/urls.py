@@ -19,5 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('home.urls')), # Adjust 'homepage' if using a different app
+    path('', include('home.urls')),
+    path('', include('user_management.urls')),
 ]
