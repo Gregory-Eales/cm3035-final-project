@@ -40,16 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # boostrap lib
     'bootstrap5',
+    'widget_tweaks',
     # project applications:
-    'api',
-    'chat',
-    'core',
-    'home',
-    'media',
-    'profiles',
-    'status_updates',
-    'testing',
-    'user_management',
+    'api', # - rest api
+    'core', # - main app
 ]
 
 MIDDLEWARE = [
@@ -67,7 +61,6 @@ ROOT_URLCONF = 'socialsite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
