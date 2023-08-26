@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block title %}Chat - SocialSite{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar for active conversations -->
+        <div class="col-4">
+            <div class="list-group">
+                {% for conversation in active_conversations %}
+                    <a href="" class="list-group-item list-group-item-action">
+                        {{ conversation.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Main area for the current conversation -->
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                    Current Conversation: {{ current_conversation.name }}
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        {% for message in current_conversation.messages %}
+                            <li>
+                                <strong>{{ message.author }}: </strong>{{ message.content }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            {{ form.message|add_class:"form-control" }}
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
