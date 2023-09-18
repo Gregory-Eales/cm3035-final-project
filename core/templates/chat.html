@@ -1,47 +1,120 @@
 {% extends 'base.html' %}
-{% load widget_tweaks %}
-{% block title %}Chat - SocialSite{% endblock %}
+
+{% block title %} Chat - YourApp {% endblock %}
 
 {% block content %}
 <div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar for active conversations -->
-        <div class="col-4">
-            <div class="list-group">
-                {% for conversation in active_conversations %}
-                    <a href="" class="list-group-item list-group-item-action">
-                        {{ conversation.name }}
-                    </a>
-                {% endfor %}
-            </div>
+  <div class="row">
+    <!-- Sidebar for Friends -->
+    <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar position-fixed">
+      <div class="position-sticky">
+        <h4 class="sidebar-heading">Friends</h4>
+        <ul class="nav flex-column">
+          {% for friend in friends %}
+            <li class="nav-item">
+              <!-- add link to chat with user id chat/user_id-->
+              <a class="nav-link" href="{% url 'chat' friend.user_id %}">
+                {{ friend.username }}
+              </a>
+            </li>
+          {% empty %}
+            <li class="nav-item">
+              No friends available.
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main Chat Area -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" style="margin-left: 25%;">
+      <div class="chat-container">
+        <h2 class="chat-name"> Chat {{ friend.username }}</h2>
+        <div class="chat-box">
+          <!-- Add chat messages here -->
         </div>
-        
-        <!-- Main area for the current conversation -->
-        <div class="col-8">
-            <div class="card">
-                <div class="card-header">
-                    Current Conversation: {{ current_conversation.name }}
-                </div>
-                <div class="card-body">
-                    <ul class="list-unstyled">
-                        {% for message in current_conversation.messages %}
-                            <li>
-                                <strong>{{ message.author }}: </strong>{{ message.content }}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                <div class="card-footer">
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="input-group">
-                            {{ form.message|add_class:"form-control" }}
-                            <button type="submit" class="btn btn-primary">Send</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+      </div>
+    </main>
+  </div>
 </div>
+
+<!-- Fixed Chat Input at Bottom -->
+<div class="fixed-bottom bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3"></div>
+      <div class="col-md-9">
+        <div class="d-flex justify-content-between align-items-center p-3">
+          <input type="text" id="messageInput" class="form-control" placeholder="Type a message...">
+          <button type="button" id="sendButton" class="btn btn-primary ms-3">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let chatSocket;
+
+  // Function to close existing WebSocket
+  function closeChat() {
+      if (chatSocket) {
+          chatSocket.close();
+      }
+  }
+
+  // Function to initiate a new WebSocket connection
+  function startChat(chat_name) {
+      closeChat();  // Close existing WebSocket
+      chatSocket = new WebSocket(
+          'ws://' + window.location.host + '/chatty/ws/' + chat_name + '/'
+      );
+
+      chatSocket.onmessage = function(e) {
+          const data = JSON.parse(e.data);
+          // Append the message to your chat-box. Update this according to your HTML layout.
+          document.querySelector('.chat-box').innerHTML += ('<p>' + data.message + '</p>');
+      };
+
+      chatSocket.onclose = function(e) {
+          console.error('Chat socket closed unexpectedly');
+      };
+  }
+
+  // Send Message
+  document.querySelector('#sendButton').onclick = function(e) {
+      const message = document.querySelector('#messageInput').value;
+      chatSocket.send(JSON.stringify({
+          'message': message
+      }));
+      document.querySelector('#messageInput').value = '';
+  };
+
+  // Add click listeners to friend links to start a new chat
+  const friendLinks = document.querySelectorAll('.nav-link');
+  friendLinks.forEach(link => {
+
+      link.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('href', this.getAttribute('href'));
+          // returns /chat/user_id
+          const user_id = this.getAttribute('href').split('/')[2];
+          // merge the friend user_id and the current user_id into list
+          // sort the list and join them with a dash
+
+          // print out 
+          console.log("current user id", {{ user.id }});
+          console.log("friend user id", user_id);
+
+          // get the auther users user_id
+          var user_ids = [user_id, {{ user.id }}];
+
+          console.log('user_ids', user_ids);
+          
+          const chat_name = user_ids.sort().join('-');
+          startChat(chat_name);
+          // Navigate to the chat page or update the chat area
+      });
+  });
+</script>
 {% endblock %}

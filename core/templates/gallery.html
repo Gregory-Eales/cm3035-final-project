@@ -1,0 +1,89 @@
+<div class="container mt-4">
+
+    <!-- if profile_user == user-->
+    <div class="d-flex align-items-center"></div>
+        <h2>Your Gallery</h2>
+        {% if profile_user == user %}
+            <form id="image-upload-form" action="/api/image/" method="post" enctype="multipart/form-data" class="form-inline ml-4">
+                {% csrf_token %}
+                <!-- Hidden fields -->
+                <input type="hidden" name="user_id" value="{{ user.id }}">
+                <input type="hidden" id="name" name="name" value="name">
+                <!-- File input is hidden -->
+                <input type="file" id="file-input" name="image" style="display: none;">
+                <!-- File select button -->
+                <button type="button" id="select-file-btn" class="btn btn-secondary ml-2">Select File</button>
+                <!-- Submit button -->
+                <input type="submit" id="submit-btn" class="btn btn-primary ml-2" value="Upload Image">
+            </form>
+        {% endif %}
+    </div>
+    
+
+    <div id="images" class="row">
+        <style>
+            .fixed-height-img {
+                height: 200px;
+                object-fit: cover;
+            }
+            .scrollable-container {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            .scrollable-item {
+                display: inline-block;
+            }
+        </style>
+        
+        <div class="scrollable-container"> <!-- Newly added class, make width smaller -->
+            {% for image in images %}
+                <div class="scrollable-item mr-2">
+                    <div class="card" style="width: 18rem;">
+                        <img src="{{ image.image.url }}" class="card-img-top fixed-height-img" alt="...">
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+<script>
+setInterval(function() {
+    console.log("Hey");
+    const req = new XMLHttpRequest();
+    req.onreadystatechange = function(){};
+    req.open("GET", "/api/images/");
+    req.send();
+    }, 50000);
+
+req.onreadystatechange = function(){
+  if (req.readyState === 4) {
+    console.log("Got Data")
+    html = "<table><tr>";
+    data = JSON.parse(req.response)
+    data.forEach(function(obj)
+    { html += "<td>"+obj.name+"<br />";
+      html += "<img src=\""+obj.image+"\"></td>" });
+    html += "</tr></table>";
+  }}
+  document.getElementById("images").innerHTML = html;
+
+</script>
+
+<script>
+    // Step 1: Open file dialog when the "Select File" button is clicked
+    document.getElementById('select-file-btn').addEventListener('click', function() {
+        document.getElementById('file-input').click();
+    });
+
+    // Step 2: Capture file after user selects it
+    document.getElementById('file-input').addEventListener('change', function(event) {
+        // Here you can handle the selected file if you need to,
+        // For example: you can display the file name to the user
+        const selectedFile = event.target.files[0];
+    });
+
+    // Step 3: Now, the user can manually click the "Upload Image" to submit the form
+    // No additional code required
+</script>

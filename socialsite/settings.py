@@ -26,24 +26,32 @@ SECRET_KEY = 'django-insecure-hlqb*1tk#f!vo8p1x_6u_!tx^-jqd#s#&-r@mk3z5&av#8k%=#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+MEDIA_ROOT = 'images'
+MEDIA_URL = '/images/'
 
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '.coursera-apps.org',
+]
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    'daphne',
+    'api',
+    'core',
+    'chat',
+    'channels',
+    'bootstrap5',
+    'widget_tweaks',
+    'rest_framework',
     'django.contrib.auth',
-    'django.contrib.contenttypes',
+    'django.contrib.admin',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # boostrap lib
-    'bootstrap5',
-    'widget_tweaks',
-    # project applications:
-    'api', # - rest api
-    'core', # - main app
+    'django.contrib.contenttypes',
 ]
 
 MIDDLEWARE = [
@@ -73,8 +81,9 @@ TEMPLATES = [
     },
 ]
 
+#WSGI_APPLICATION = 'socialsite.wsgi.application'
 
-WSGI_APPLICATION = 'socialsite.wsgi.application'
+ASGI_APPLICATION = 'socialsite.routing.application'
 
 
 # Database
@@ -128,3 +137,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        }
+    }
+}

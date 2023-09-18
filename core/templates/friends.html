@@ -1,0 +1,32 @@
+<div class="container mt-4">
+    <div class="d-flex align-items-center">
+        <h2>Friends</h2>
+    </div>
+    <div id="images" class="row">
+        <style>
+            .fixed-height-img {
+                height: 200px;
+                object-fit: cover;
+            }
+            .scrollable-container {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            .scrollable-item {
+                display: inline-block;
+            }
+        </style>
+        
+        <div class="scrollable-container"> <!-- Newly added class, make width smaller -->
+            {% for friend in friends %}
+                <a href="{% url 'profile' friend.username %}" class="d-flex align-items-center">
+                    <!-- Empty image (placeholder for actual user image later) -->
+                    <img src="#" alt="User Image" class="img-thumbnail" style="width: 50px; height: 50px;">
+                    
+                    <!-- Display profile name -->
+                    {{ friend.username }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>

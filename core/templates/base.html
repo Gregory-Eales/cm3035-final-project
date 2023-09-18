@@ -20,19 +20,17 @@
             <ul class="navbar-nav justify-content-end">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
+                        <a class="nav-link active" href="/chat">Chat</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link active" href="/logout">Logout</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/profile">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/chat">Chat</a>
-                    </li>
-                    <li class="nav-item">
                         <div class="input-group">
-                            <input type="search" class="form-control rounded" placeholder="User Search" aria-label="Search" aria-describedby="search-addon" />
-                            <button type="button" class="btn btn-outline-primary">search</button>
-                          </div>
+                            <input id="searchInput" type="search" class="form-control rounded" placeholder="User Search" aria-label="Search" aria-describedby="search-addon" />
+                            <button id="searchButton" type="button" class="btn btn-outline-primary">search</button>
+                        </div>
+                        <div id="searchResults"></div>
                     </li>
                 {% else %}
                     <li class="nav-item">
@@ -58,5 +56,26 @@
       </div>
     </footer>
   </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Select the button by its id
+        const searchButton = document.getElementById("searchButton");
+
+        // Add a click event listener
+        searchButton.addEventListener("click", function() {
+            // Retrieve the value from the input field
+            const query = document.getElementById("searchInput").value;
+
+            // Construct the URL
+            const searchUrl = `/search?query=${encodeURIComponent(query)}`;
+
+            // Redirect
+            window.location.href = searchUrl;
+        });
+    });
+</script>
+
+
 
 </html>

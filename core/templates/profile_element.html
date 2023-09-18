@@ -1,0 +1,105 @@
+<div class="container mt-5">
+    <!-- Page title -->
+    <h1 class="text-center mb-5">{{ profile_user.username }}'s Profile</h1>
+    
+    <!-- User information -->
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <!-- User image or avatar -->
+                    <div class="text-center mb-4">
+                        <img src="{{ profile_user.profile_image_url }}" class="rounded-circle" width="100" alt="Profile Image">
+                    </div>
+                    <!-- Username -->
+                    <h4 class="card-title text-center">{{ profile_user.username }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- if the current user is the same as the profile user, show the edit profile button -->
+{% if user == profile_user %}
+    <!-- <div class="container mt-5">
+        <h3>Create a new post</h3>
+        <form id="postForm">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="statusText" class="form-label">What's on your mind?</label>
+                <textarea class="form-control" id="statusText" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Post</button>
+        </form>
+    </div> -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('postForm');
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const statusText = document.getElementById('statusText').value;
+                // Fetch CSRF token from Django
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                const requestOptions = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({ status: statusText })
+                };
+                const response = await fetch('/api/statuses/', requestOptions);
+                if (response.ok) {
+                    alert('Post created successfully');
+                } else {
+                    alert('Failed to create post');
+                }
+            });
+        });
+    </script>
+{% else %}
+    <!-- HTML -->
+
+{% if not is_friend %}
+    <form id="addFriendForm">
+        {% csrf_token %}
+        <!-- Other form elements -->
+        <button id="addFriendBtn" class="btn btn-success" data-friend-id="{{ profile_user.id }}">Add Friend</button>
+    </form>
+{% endif %}
+
+<!-- JavaScript -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const addFriendBtn = document.getElementById('addFriendBtn');
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        
+        addFriendBtn.addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            // add profile.user_id from django
+            const friendId = this.getAttribute('data-friend-id');
+            const payload = {
+                
+                'friend_id': friendId,
+            };
+
+            fetch('/api/friends/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Assuming the API returns a 'success' boolean in the response
+                if (data.success) {
+                    window.location.href = '/user-page-url'; // Replace with the actual URL of the user's page
+                }
+            });
+        });
+    });
+</script>
+
+{% endif %}

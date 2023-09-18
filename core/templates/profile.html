@@ -1,31 +1,19 @@
 {% extends 'base.html' %}
-{% block title %}Profile - SocialSite{% endblock %}
+
+{% block title %}Home - SocialSite{% endblock %}
+
 {% block content %}
-    <div class="container mt-5">
-        <!-- Page title -->
-        <h1 class="text-center mb-5">{{ user.username }}'s Profile</h1>
+    
+    {% if user.is_authenticated %}
         
-        <!-- User information -->
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <!-- User image or avatar -->
-                        <div class="text-center mb-4">
-                            <img src="{{ user.profile_image_url }}" class="rounded-circle" width="100" alt="Profile Image">
-                        </div>
-                        <!-- Username -->
-                        <h4 class="card-title text-center">{{ user.username }}</h4>
-                        <!-- Email -->
-                        <p class="text-center text-muted">{{ user.email }}</p>
-                        <!-- Bio -->
-                        <div class="mt-4">
-                            <h6>About Me:</h6>
-                            <p>{{ user.bio }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="container mt-5">
+        {% include 'profile_element.html' %}
+        <div class="border-bottom my-3"></div>
+        {% include 'gallery.html' %}
+        <div class="border-bottom my-3"></div>
+        {% include 'posts.html' %}
+
         </div>
-    </div>
+    {% endif %}
+
 {% endblock %}
